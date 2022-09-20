@@ -63,13 +63,19 @@ class EightPuzzle:
 
     def h(self, state):
         """ Return the heuristic value for a given state. Default heuristic function used is 
-        h(n) = number of misplaced tiles. """
-        # new heuristic: from the ABSOLUTE difference between goal state and current state, add
-        # diff % 3 and diff // 3 to get manhattan distance
-
+        h(n) = number of misplaced tiles. """    
         
         return sum(s != g for (s, g) in zip(state, self.goal))
 
+    def manhattan(self, state):
+        """ from the ABSOLUTE difference between goal state and current state, add
+        diff % 3 and diff // 3 to get manhattan distance. """
+        h_cost = 0
+        for i in range(8):
+            distance = abs(state.index(i) - self.goal.index(i))
+            h_cost = distance % 3 + distance // 3
+
+        return h_cost
 
 def reconstruct_path(current_state, came_from):
     reverse_path = []
@@ -114,7 +120,6 @@ def astar_search(problem: EightPuzzle):
                 came_from.update({next_state: (current_state, current_action)})
                 g_score[next_state] = tentative_g_score
                 f_score[next_state] = tentative_g_score + problem.h(next_state)
-                frontier.put((f_score[next_state], next_state))
-                
+                frontier.put((f_score[next_state], next_state)) # f_score is important                
 
     return None
