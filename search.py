@@ -3,6 +3,8 @@
 #   1. Implement the A* graph search algorithm (`astar_search`)   #
 ###################################################################
 
+import numpy as np 
+from itertools import permutations
 from queue import PriorityQueue
 
 class EightPuzzle:
@@ -65,32 +67,54 @@ class EightPuzzle:
         # new heuristic: from the ABSOLUTE difference between goal state and current state, add
         # diff % 3 and diff // 3 to get manhattan distance
 
-        h_cost = 0
-        for i in range(8):
-            distance = abs(state.index(i) - self.goal.index(i))
-            h_cost = distance % 3 + distance // 3
-
-        return h_cost
+        
+        return sum(s != g for (s, g) in zip(state, self.goal))
 
 
-class Node:
-    # to keep track of the visited nodes
-    def __init__(self, current, path, h):
-        self.current = current
-        self.path = path        # should be a list of previous states or somethin
-        self.h = h
+def reconstruct_path(current_state, came_from):
+    reverse_path = []
+
+    while current_state in came_from:
+        current_state, current_action = came_from[current_state]
+        reverse_path.append(current_action)
+
+    reverse_path.reverse()
+    return reverse_path
 
 
-
-def astar_search(problem):
+def astar_search(problem: EightPuzzle):
     """ TODO: implement A* search with the heuristic function you just defined. 
     
         This function should return the solution, i.e., the sequence of actions taken to reach
         from the initial state to the goal state, as a list. See the test file for example. """
-    h = problem.h
 
-    state = (1, 2, 3,5)
+    reached = set()
+    frontier = PriorityQueue()
+    came_from = {}
 
-    h_value = puzzle.h(state)
+    g_score = {state: np.inf for state in permutations(problem.initial)}
+    g_score[problem.initial] = 0
 
-    return NotImplementedError
+    f_score = {state: np.inf for state in permutations(problem.initial)}
+    f_score[problem.initial] = problem.h(problem.initial)
+    
+    frontier.put((problem.h(problem.initial), problem.initial))
+    
+    while not frontier.empty():
+        current_value, current_state = frontier.get()
+        reached.add(current_state)
+        if problem.goal_test(current_state):
+            return reconstruct_path(current_state, came_from)
+
+        possible_actions = problem.actions(current_state)
+        for current_action in possible_actions:
+            tentative_g_score = g_score[current_state] + 1
+            next_state = problem.result(current_state, current_action)
+            if (next_state not in reached) and (tentative_g_score < g_score[next_state]):
+                came_from.update({next_state: (current_state, current_action)})
+                g_score[next_state] = tentative_g_score
+                f_score[next_state] = tentative_g_score + problem.h(next_state)
+                frontier.put((f_score[next_state], next_state))
+                
+
+    return None

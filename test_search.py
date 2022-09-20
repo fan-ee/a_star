@@ -10,10 +10,10 @@ def test_heuristic():
 
 def test_astar_search():
     assert astar_search(eight_puzzle_test1) == ['RIGHT', 'RIGHT']
-    # assert astar_search(eight_puzzle_test2) == ['DOWN', 'RIGHT', 'UP', 'LEFT', 'DOWN', 'DOWN', 'RIGHT',
-    #                                             'UP', 'UP', 'LEFT', 'DOWN', 'LEFT', 'DOWN', 'RIGHT', 'RIGHT',
-    #                                             'UP', 'LEFT', 'LEFT', 'DOWN', 'RIGHT', 'RIGHT', 'UP', 'UP',
-    #                                             'LEFT', 'LEFT']
+    assert astar_search(eight_puzzle_test2) == ['DOWN', 'RIGHT', 'UP', 'LEFT', 'DOWN', 'DOWN', 'RIGHT',
+                                                'UP', 'UP', 'LEFT', 'DOWN', 'LEFT', 'DOWN', 'RIGHT', 'RIGHT',
+                                                'UP', 'LEFT', 'LEFT', 'DOWN', 'RIGHT', 'RIGHT', 'UP', 'UP',
+                                                'LEFT', 'LEFT']
     
 if __name__ == '__main__':
     pytest.main()
